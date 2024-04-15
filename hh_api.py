@@ -1,41 +1,43 @@
 import requests
 from math_lib import print_stats_table
 
-
 MOSCOW_AREA_ID = 1
+MAX_ITEMS = 2000
 
 
 def fetch_programmer_vacancies(language):
     url = 'https://api.hh.ru/vacancies'
+    per_page = min(50, MAX_ITEMS)
     params = {
         'text': f'Программист {language}',
         'area': MOSCOW_AREA_ID,
-        'per_page': 100
+        'per_page': per_page
     }
     vacancies = []
 
     page = 0
-    while True:
+    while page * per_page < MAX_ITEMS:
         params['page'] = page 
         response = requests.get(url, params=params)
         response.raise_for_status()
-        vacancies_data = response.json()
-        items = vacancies_data.get('items', [])
-        if not items:
+        response_data = response.json()
+        vacancy_list = response_data.get('items', [])
+        if not vacancy_list:
             break
-        vacancies.extend(items)
+        vacancies.extend(vacancy_list)
         page += 1
 
-    return vacancies
+    total_vacancies_count = response_data.get('found', 0) 
+    return vacancies, total_vacancies_count
 
 
 def predict_average_salary(vacancies):
     average_salaries = []
     for vacancy in vacancies:
-        salary_data = vacancy.get('salary', {'from': None, 'to': None})
-        if salary_data and salary_data.get('currency') == 'RUR':
-            salary_from = salary_data['from']
-            salary_to = salary_data['to']
+        salary_information = vacancy.get('salary', {'from': None, 'to': None})
+        if salary_information and salary_information.get('currency') == 'RUR':
+            salary_from = salary_information['from']
+            salary_to = salary_information['to']
             if salary_from and salary_to:
                 average_salary = (salary_from + salary_to) / 2
             elif salary_from:
@@ -45,7 +47,7 @@ def predict_average_salary(vacancies):
             else:
                 average_salary = None
         
-            if average_salary is not None:
+            if average_salary:
                 average_salaries.append(average_salary)
 
     if average_salaries:
@@ -59,12 +61,11 @@ def main():
     language_stats = {}
 
     for language in popular_languages:
-        vacancies = fetch_programmer_vacancies(language)
+        vacancies, total_vacancies_count = fetch_programmer_vacancies(language)
         average_salary = predict_average_salary(vacancies)
-        total_vacancies_count = len(vacancies)
         language_stats[language] = {
-            'total_vacancies_count': total_vacancies_count,
-            'vacancies_processed': total_vacancies_count,
+            'vacancies_found': total_vacancies_count,
+            'vacancies_processed': len(vacancies),
             'average_salary': average_salary
         }
 

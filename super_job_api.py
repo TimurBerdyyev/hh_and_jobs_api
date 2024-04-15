@@ -12,7 +12,7 @@ def predict_salary(salary_from, salary_to):
     elif salary_to:
         return salary_to
     else:
-        return None
+        return 0
 
 
 def fetch_vacancies_from_superJob(secret_key, language, town='Москва', keyword='программист', per_page=100):
@@ -21,42 +21,30 @@ def fetch_vacancies_from_superJob(secret_key, language, town='Москва', key
     params = {'town': town, 'keyword': f'{keyword} {language}', 'page': 0, 'count': per_page}
     vacancies = []
 
-    try:
-        while True:
-            response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status() 
-            data = response.json()
-            items = data.get('objects', [])
-            if not items:
-                break 
-            vacancies.extend(items)
-            params['page'] += 1 
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching vacancies: {e}")
-        return None
+    while True:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status() 
+        vacancies_data = response.json()
+        vacancy_list = vacancies_data.get('objects', [])
+        if not vacancy_list:
+            break 
+        vacancies.extend(vacancy_list)
+        params['page'] += 1 
 
-    return vacancies
-
-
-def predict_average_salary(vacancies):
-    processed_vacancies = [predict_salary(vacancy['payment_from'], vacancy['payment_to']) for vacancy in vacancies]
-    processed_vacancies = [salary for salary in processed_vacancies if salary]
-
-    return int(sum(processed_vacancies) / len(processed_vacancies)) if processed_vacancies else None
+    found_vacancies = vacancies_data.get('total', 0)
+    return vacancies, found_vacancies
 
 
 def main():
+    load_dotenv()
     superJob_secret_key = os.getenv('SUPER_JOB_API')
     languages = ['Python', 'Java', 'JavaScript', 'C#', 'C++', 'Ruby', 'PHP', 'Swift', 'Go']
     stats = {}
 
     for language in languages:
-        vacancies = fetch_vacancies_from_superJob(superJob_secret_key, language)
+        vacancies, found_vacancies = fetch_vacancies_from_superJob(superJob_secret_key, language)
         processed_vacancies = [predict_salary(vacancy['payment_from'], vacancy['payment_to']) for vacancy in vacancies]
-
-        found_vacancies = len(vacancies)
-        average_salary = predict_average_salary(vacancies)
-
+        average_salary = int(sum(processed_vacancies) / len(processed_vacancies)) if processed_vacancies else None
         stats[language] = {
             'vacancies_found': found_vacancies,
             'vacancies_processed': len(processed_vacancies),
@@ -67,6 +55,5 @@ def main():
 
 
 if __name__ == "__main__":
-    load_dotenv()
     stats = main()
     print_stats_table(stats)
