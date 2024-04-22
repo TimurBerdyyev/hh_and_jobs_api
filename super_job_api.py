@@ -14,25 +14,24 @@ def predict_salary(salary_from, salary_to):
     else:
         return 0
 
-
 def fetch_vacancies_from_superJob(secret_key, language, town='Москва', keyword='программист', per_page=100):
     url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
     params = {'town': town, 'keyword': f'{keyword} {language}', 'page': 0, 'count': per_page}
-    vacancies = []
+    vacancy_results = []
 
     while True:
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status() 
         vacancies_data = response.json()
-        vacancy_list = vacancies_data.get('objects', [])
-        if not vacancy_list:
+        vacancies_data = vacancies_data.get('objects', [])  # Изменено на более описательное название
+        if not vacancies_data:
             break 
-        vacancies.extend(vacancy_list)
+        vacancy_results.extend(vacancies_data)
         params['page'] += 1 
 
     found_vacancies = vacancies_data.get('total', 0)
-    return vacancies, found_vacancies
+    return vacancy_results, found_vacancies
 
 
 def main():
