@@ -20,10 +20,10 @@ def fetch_programmer_vacancies(language):
         response = requests.get(url, params=params)
         response.raise_for_status()
         response_data = response.json()
-        vacancy_list = response_data.get('items', [])
-        if not vacancy_list:
+        vacancies_data = response_data.get('items', [])
+        if not vacancies_data:
             break
-        vacancies.extend(vacancy_list)
+        vacancies.extend(vacancies_data)
         page += 1
 
     total_vacancies_count = response_data.get('found', 0) 
