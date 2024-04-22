@@ -7,11 +7,10 @@ MAX_ITEMS = 2000
 
 def fetch_programmer_vacancies(language):
     url = 'https://api.hh.ru/vacancies'
-    per_page = min(50, MAX_ITEMS)
     params = {
         'text': f'Программист {language}',
         'area': MOSCOW_AREA_ID,
-        'per_page': per_page
+        'per_page': min(50, MAX_ITEMS)
     }
     vacancies = []
 
