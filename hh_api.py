@@ -33,10 +33,10 @@ def fetch_programmer_vacancies(language):
 def predict_average_salary(vacancies):
     average_salaries = []
     for vacancy in vacancies:
-        salary_information = vacancy.get('salary', {'from': None, 'to': None})
-        if salary_information and salary_information.get('currency') == 'RUR':
-            salary_from = salary_information['from']
-            salary_to = salary_information['to']
+        salary = vacancy.get('salary', {'from': None, 'to': None})
+        if salary and salary.get('currency') == 'RUR':
+            salary_from = salary['from']
+            salary_to = salary['to']
             if salary_from and salary_to:
                 average_salary = (salary_from + salary_to) / 2
             elif salary_from:
