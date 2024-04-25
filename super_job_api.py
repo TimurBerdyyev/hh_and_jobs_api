@@ -47,7 +47,7 @@ def main():
 
     for language in languages:
         vacancies, found_vacancies = fetch_vacancies_from_superJob(superJob_secret_key, language)
-        processed_vacancies = [predict_average_salary(vacancy['payment_from'], vacancy['payment_to']) for vacancy in vacancies]
+        processed_vacancies = [predict_average_salary(vacancy['payment_from'], vacancy['payment_to']) for vacancy in vacancies if vacancy.get('salary')]
         average_salary = int(sum(processed_vacancies) / len(processed_vacancies)) if processed_vacancies else None
         stats[language] = {
             'vacancies_found': found_vacancies,
