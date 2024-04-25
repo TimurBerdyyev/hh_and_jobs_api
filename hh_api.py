@@ -19,14 +19,14 @@ def fetch_programmer_vacancies(language):
         params['page'] = page 
         response = requests.get(url, params=params)
         response.raise_for_status()
-        response_data = response.json()
-        vacancies_data = response_data.get('items', [])
+        requests_data = response.json()
+        vacancies_data = requests_data.get('items', [])
         if not vacancies_data:
             break
         vacancies.extend(vacancies_data)
         page += 1
 
-    total_vacancies_count = response_data.get('found', 0) 
+    total_vacancies_count = requests_data.get('found', 0) 
     return vacancies, total_vacancies_count
 
 
