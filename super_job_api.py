@@ -23,7 +23,7 @@ def predict_average_salary(vacancies):
 
 def fetch_vacancies_from_superJob(secret_key, language, town='Москва', keyword='программист', per_page=100):
     url = 'https://api.superjob.ru/2.0/vacancies/'
-    headers = {'X-Api-App-Id': superJob_secret_key}
+    headers = {'X-Api-App-Id': secret_key}
     params = {'town': town, 'keyword': f'{keyword} {language}', 'page': 0, 'count': per_page}
     vacancy_results = []
 
@@ -42,6 +42,8 @@ def fetch_vacancies_from_superJob(secret_key, language, town='Москва', key
 
 
 def main():
+    superJob_secret_key = os.getenv('SUPER_JOB_API')
+    
     languages = ['Python', 'Java', 'JavaScript', 'C#', 'C++', 'Ruby', 'PHP', 'Swift', 'Go']
     stats = {}
 
@@ -60,6 +62,5 @@ def main():
 
 if __name__ == "__main__":
     load_dotenv()
-    superJob_secret_key = os.getenv('SUPER_JOB_API')
     stats = main()
     print_stats_table(stats)
