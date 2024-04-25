@@ -13,3 +13,15 @@ def print_stats_table(stats):
 
     table = AsciiTable(vacancies_summary_table)
     print(table.table)
+
+
+def calculate_expected_salary(salary_from, salary_to):
+    if salary_from is not None and salary_to is not None:
+        return (salary_from + salary_to) / 2
+    elif salary_from is not None:
+        return salary_from
+    elif salary_to is not None:
+        return salary_to
+    else:
+        return 0
+

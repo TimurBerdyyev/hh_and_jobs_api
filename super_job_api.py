@@ -1,18 +1,25 @@
 import os
 import requests
 from dotenv import load_dotenv
-from math_lib import print_stats_table
+from math_lib import print_stats_table, calculate_expected_salary
 
 
-def predict_salary(salary_from, salary_to):
-    if salary_from and salary_to:
-        return (salary_from + salary_to) / 2
-    elif salary_from:
-        return salary_from
-    elif salary_to:
-        return salary_to
+def predict_average_salary(vacancies):
+    average_salaries = []
+    for vacancy in vacancies:
+        salary = vacancy.get('salary', {'from': None, 'to': None})
+        if salary and salary.get('currency') == 'RUR':
+            salary_from = salary['from']
+            salary_to = salary['to']
+            average_salary = calculate_expected_salary(salary_from, salary_to)
+            if average_salary:
+                average_salaries.append(average_salary)
+
+    if average_salaries:
+        return int(sum(average_salaries) / len(average_salaries))
     else:
-        return 0
+        return None
+
 
 def fetch_vacancies_from_superJob(secret_key, language, town='Москва', keyword='программист', per_page=100):
     url = 'https://api.superjob.ru/2.0/vacancies/'
@@ -40,7 +47,7 @@ def main():
 
     for language in languages:
         vacancies, found_vacancies = fetch_vacancies_from_superJob(superJob_secret_key, language)
-        processed_vacancies = [predict_salary(vacancy['payment_from'], vacancy['payment_to']) for vacancy in vacancies]
+        processed_vacancies = [predict_average_salary(vacancy['payment_from'], vacancy['payment_to']) for vacancy in vacancies]
         average_salary = int(sum(processed_vacancies) / len(processed_vacancies)) if processed_vacancies else None
         stats[language] = {
             'vacancies_found': found_vacancies,

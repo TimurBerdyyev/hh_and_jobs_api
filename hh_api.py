@@ -1,5 +1,5 @@
 import requests
-from math_lib import print_stats_table
+from math_lib import print_stats_table, calculate_expected_salary
 
 MOSCOW_AREA_ID = 1
 MAX_ITEMS = 2000
@@ -7,10 +7,11 @@ MAX_ITEMS = 2000
 
 def fetch_programmer_vacancies(language):
     url = 'https://api.hh.ru/vacancies'
+    per_page = min(50, MAX_ITEMS)
     params = {
         'text': f'Программист {language}',
         'area': MOSCOW_AREA_ID,
-        'per_page': min(50, MAX_ITEMS)
+        'per_page': per_page
     }
     vacancies = []
 
@@ -26,7 +27,7 @@ def fetch_programmer_vacancies(language):
         vacancies.extend(vacancies_data)
         page += 1
 
-    total_vacancies_count = requests_data.get('found', 0) 
+    total_vacancies_count = requests_data.get('found', 0)
     return vacancies, total_vacancies_count
 
 
@@ -37,15 +38,7 @@ def predict_average_salary(vacancies):
         if salary and salary.get('currency') == 'RUR':
             salary_from = salary['from']
             salary_to = salary['to']
-            if salary_from and salary_to:
-                average_salary = (salary_from + salary_to) / 2
-            elif salary_from:
-                average_salary = salary_from * 1.2
-            elif salary_to:
-                average_salary = salary_to * 0.8
-            else:
-                average_salary = None
-        
+            average_salary = calculate_expected_salary(salary_from, salary_to)
             if average_salary:
                 average_salaries.append(average_salary)
 
