@@ -16,11 +16,12 @@ def print_stats_table(stats):
 
 
 def calculate_expected_salary(salary_from, salary_to):
-    if salary_from is not None and salary_to is not None:
-        return (salary_from + salary_to) / 2
-    elif salary_from is not None:
-        return salary_from
-    elif salary_to is not None:
+    if salary_from:
+        if salary_to:
+            return (salary_from + salary_to) / 2
+        else:
+            return salary_from
+    elif salary_to:
         return salary_to
     else:
         return 0
