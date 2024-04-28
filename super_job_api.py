@@ -41,7 +41,7 @@ def fetch_vacancies_from_superJob(secret_key, language, town='Москва', key
     return vacancy_results, found_vacancies
 
 
-def main():
+def analyze_superjob_vacancies():
     superJob_secret_key = os.getenv('SUPER_JOB_API')
     
     languages = ['Python', 'Java', 'JavaScript', 'C#', 'C++', 'Ruby', 'PHP', 'Swift', 'Go']
@@ -62,5 +62,5 @@ def main():
 
 if __name__ == "__main__":
     load_dotenv()
-    stats = main()
+    stats = analyze_superjob_vacancies()
     print_stats_table(stats)
