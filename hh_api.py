@@ -48,7 +48,7 @@ def predict_average_salary(vacancies):
         return None
 
 
-def main():
+def analyze_vacancies():
     popular_languages = ['Python', 'Java', 'JavaScript', 'C#', 'C++', 'Ruby', 'PHP', 'Swift', 'Go']
     language_stats = {}
 
@@ -65,5 +65,5 @@ def main():
 
 
 if __name__ == "__main__":
-    stats = main()
+    stats = analyze_vacancies()
     print_stats_table(stats)
