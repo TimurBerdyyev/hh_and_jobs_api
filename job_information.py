@@ -1,6 +1,6 @@
 import hh_api
 import super_job_api
-import math_lib
+import vacancy_analysis_math
 
 
 def main():
@@ -8,9 +8,9 @@ def main():
     super_job_stats = super_job_api.main()
 
     print("HeadHunter Statistics:")
-    math_lib.print_stats_table(hh_stats)
+    vacancy_analysis_math.print_stats_table(hh_stats)
     print("\nSuperJob Statistics:")
-    math_lib.print_stats_table(super_job_stats)
+    vacancy_analysis_math.print_stats_table(super_job_stats)
 
 
 if __name__ == "__main__":
