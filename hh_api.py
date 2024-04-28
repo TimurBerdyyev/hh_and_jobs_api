@@ -1,5 +1,5 @@
 import requests
-from math_lib import print_stats_table, calculate_expected_salary
+from vacancy_analysis_math import print_stats_table, calculate_expected_salary
 
 MOSCOW_AREA_ID = 1
 MAX_ITEMS = 2000
