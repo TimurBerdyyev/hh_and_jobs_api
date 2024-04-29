@@ -54,14 +54,14 @@ def analyze_vacancies():
     for language in popular_languages:
         vacancies, total_vacancies_count = fetch_programmer_vacancies(language)
         average_salary = predict_average_salary(vacancies)
+        vacancies_processed = sum(1 for vacancy in vacancies if vacancy.get('salary'))
         language_stats[language] = {
             'vacancies_found': total_vacancies_count,
-            'vacancies_processed': len(vacancies),
+            'vacancies_processed': vacancies_processed,
             'average_salary': average_salary
         }
 
     return language_stats
-
 
 if __name__ == "__main__":
     stats = analyze_vacancies()
