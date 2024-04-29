@@ -30,14 +30,14 @@ def fetch_vacancies_from_superJob(secret_key, language, town='Москва', key
     while True:
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status() 
-        vacancies_data = response.json()
-        job_list = vacancies_data.get('objects', []) 
-        if not vacancies_data:
+        vacancies_json = response.json()
+        job_list = vacancies_json.get('objects', []) 
+        if not vacancies_json:
             break 
         vacancy_results.extend(job_list)
         params['page'] += 1 
 
-    found_vacancies = vacancies_data.get('total', 0)
+    found_vacancies = vacancies_json.get('total', 0)
     return vacancy_results, found_vacancies
 
 
