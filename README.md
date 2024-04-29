@@ -16,7 +16,7 @@ git clone https://github.com/TimurBerdyyev/hhru_and_jobs.git
 ## Использование
 
 1. Убедитесь, что у вас есть доступ к API SuperJob и получите свой секретный ключ.
-2. Укажите свой секретный ключ SuperJob в переменной `SUPER_JOB_API` вашей среды.
+2. Укажите свой секретный ключ SuperJob в переменной `SUPER_JOB_KEY` вашей среды.
 3. Запустите программу, запустив файл
 ```python
 python job_information.py
