@@ -2,7 +2,7 @@ import requests
 from vacancy_analysis_math import print_stats_table, calculate_expected_salary
 
 MOSCOW_AREA_ID = 1
-MAX_ITEMS = 2000
+PER_PAGE = 50
 
 
 def fetch_programmer_vacancies(language):
@@ -10,21 +10,27 @@ def fetch_programmer_vacancies(language):
     params = {
         'text': f'Программист {language}',
         'area': MOSCOW_AREA_ID,
-        'per_page': 50 
+        'per_page': PER_PAGE
     }
     vacancies = []
 
-    page = 0
-    while page * 50 < MAX_ITEMS:
-        params['page'] = page 
+    try:
         response = requests.get(url, params=params)
         response.raise_for_status()
         response_data = response.json()
-        vacancy_items = response_data.get('items', [])
-        if not vacancy_items:
-            break
-        vacancies.extend(vacancy_items)
-        page += 1
+        total_pages = response_data['pages']
+
+        for page in range(total_pages):
+            params['page'] = page
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            response_data = response.json()
+            vacancy_items = response_data.get('items', [])
+            if not vacancy_items:
+                break
+            vacancies.extend(vacancy_items)
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching vacancies: {e}")
 
     total_vacancies_count = response_data.get('found', 0)
     return vacancies, total_vacancies_count
