@@ -25,10 +25,10 @@ def fetch_programmer_vacancies(language):
             response = requests.get(url, params=params)
             response.raise_for_status()
             response_data = response.json()
-            vacancy_items = response_data.get('items', [])
-            if not vacancy_items:
+            vacancys = response_data.get('items', [])
+            if not vacancys:
                 break
-            vacancies.extend(vacancy_items)
+            vacancies.extend(vacancys)
     except requests.exceptions.RequestException as e:
         print(f"Error fetching vacancies: {e}")
 
