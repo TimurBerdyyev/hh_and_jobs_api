@@ -17,16 +17,14 @@ def fetch_programmer_vacancies(language):
     response.raise_for_status()
     response_data = response.json()
     total_pages = response_data['pages']
+    vacancies.extend(response_data.get('items', []))
 
-    for page in range(total_pages):
+    for page in range(1, total_pages):
         params['page'] = page
         response = requests.get(url, params=params)
         response.raise_for_status()
         response_data = response.json()
-        vacancys = response_data.get('items', [])
-        if not vacancys:
-            break
-        vacancies.extend(vacancys)
+        vacancies.extend(response_data.get('items', []))
 
     total_vacancies_count = response_data.get('found', 0)
     return vacancies, total_vacancies_count
@@ -55,8 +53,8 @@ def analyze_vacancies():
 
     for language in popular_languages:
         vacancies, total_vacancies_count = fetch_programmer_vacancies(language)
-        average_salary = predict_average_salary(vacancies)
         vacancies_processed = sum(1 for vacancy in vacancies if vacancy.get('salary'))
+        average_salary = predict_average_salary(vacancies)
         language_stats[language] = {
             'vacancies_found': total_vacancies_count,
             'vacancies_processed': vacancies_processed,
@@ -64,6 +62,7 @@ def analyze_vacancies():
         }
 
     return language_stats
+
 
 if __name__ == "__main__":
     stats = analyze_vacancies()
