@@ -13,24 +13,20 @@ def fetch_programmer_vacancies(language):
         'per_page': PER_PAGE
     }
     vacancies = []
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    response_data = response.json()
+    total_pages = response_data['pages']
 
-    try:
+    for page in range(total_pages):
+        params['page'] = page
         response = requests.get(url, params=params)
         response.raise_for_status()
         response_data = response.json()
-        total_pages = response_data['pages']
-
-        for page in range(total_pages):
-            params['page'] = page
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            response_data = response.json()
-            vacancys = response_data.get('items', [])
-            if not vacancys:
-                break
-            vacancies.extend(vacancys)
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching vacancies: {e}")
+        vacancys = response_data.get('items', [])
+        if not vacancys:
+            break
+        vacancies.extend(vacancys)
 
     total_vacancies_count = response_data.get('found', 0)
     return vacancies, total_vacancies_count
