@@ -15,9 +15,9 @@ def fetch_programmer_vacancies(language):
     vacancies = []
     response = requests.get(url, params=params)
     response.raise_for_status()
-    response_data = response.json()
-    total_pages = response_data['pages']
-    vacancies.extend(response_data.get('items', []))
+    vacancy = response.json()
+    total_pages = vacancy['pages']
+    vacancies.extend(vacancy.get('items', []))
 
     for page in range(1, total_pages):
         params['page'] = page
